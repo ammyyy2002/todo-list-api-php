@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Todo;
+use Illuminate\Http\Request;
 
 class TodoController extends Controller
 {
+    //GET ALL
     public function index()
     {
         return Todo::all();
     }
 
+    //CREATE
     public function store(Request $request)
     {
         $request->validate([
@@ -22,13 +24,15 @@ class TodoController extends Controller
 
         return Todo::create($request->all());
     }
-
-    public function show(Todo $todo)
+    
+    //GET
+    public function show($id)
     {
-        return $todo;
+        return Todo::findOrFail($id);;
     }
 
-    public function update(Request $request, Todo $todo)
+    //UPDATE
+    public function update(Request $request, $id)
     {
         $request->validate([
             'title' => 'required',
@@ -36,15 +40,18 @@ class TodoController extends Controller
             'completed' => 'boolean'
         ]);
 
+        $todo = Todo::findOrFail($id);
         $todo->update($request->all());
 
-        return $todo;
+        return response()->json($todo, 200);
     }
 
-    public function destroy(Todo $todo)
+    //DELETE
+    public function destroy($id)
     {
+        $todo = Todo::findOrFail($id);
         $todo->delete();
 
-        return response()->noContent();
+        return response()->json(null, 204);
     }
 }
